@@ -30,7 +30,7 @@ class Login extends Component {
             if (res === localStorage.usertoken && res != undefined) {
                 //console.log(res);
                 this.setState({success: 1});
-                this.props.history.push(`/profile`)
+                this.props.history.push(`/`)
             } else {
                 this.setState({success: 0});
                 //console.log(this.state.success);

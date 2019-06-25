@@ -51,17 +51,14 @@ class Navbar extends Component {
                     <span className="nav-toggle-icon"></span>
                 </button>
 
-                <div className="collapse navbar-collapse justify-content-md-center"
-                    id="navbar1">
-                    {localStorage.usertoken ? null :
-                        <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <Link to="/" className="nav-link">
-                                    Home
-                            </Link>
-                            </li>
-                        </ul>
-                    }
+                <div className="collapse navbar-collapse justify-content-md-center" id="navbar1">
+                    <ul className="navbar-nav">
+                        <li className="nav-item">
+                            <Link to="/" className="nav-link">
+                                Home
+                        </Link>
+                        </li>
+                    </ul>
                     {localStorage.usertoken ? userLink : loginRegLink}
                 </div>
             </nav>
