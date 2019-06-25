@@ -33,8 +33,8 @@ class App extends Component{
     return(
       <Router>
         <div className="App">
-          <button onClick={this.getHandle}>get</button>
-          <button onClick={this.postHandle}>post</button>
+          {/* <button onClick={this.getHandle}>get</button> */}
+          {/* <button onClick={this.postHandle}>post</button> */}
           <Navbar />
           <Route exact path="/" component={LandingPage} />
           <div className="container">
