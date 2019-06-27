@@ -11,31 +11,10 @@ import axios from 'axios'
 
 
 class App extends Component{
-  getHandle = () => {
-    axios.get('/users/get', {
-      headers: {
-        id: '12345678'
-      }
-    }).then(res => {debugger})
-    .catch(err => {debugger})
-  }
-
-  postHandle = () => {
-    axios.post('/users/post', null, {
-      headers: {
-        id: '12345678'
-      }
-    }).then(res => {debugger})
-    .catch(err => {debugger})
-  }
-
-
   render(){
     return(
       <Router>
         <div className="App">
-          {/* <button onClick={this.getHandle}>get</button> */}
-          {/* <button onClick={this.postHandle}>post</button> */}
           <Navbar />
           <div className="container">
             <Route exact path="/" component={LandingPage} />

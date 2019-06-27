@@ -10,7 +10,7 @@ export const register = newUser => {
     }
 
     return axios
-        .post('/users/register', data)
+        .post(window.env.backend + 'users/register', data)
         .then(res => {
             alert("Registered")
         })
@@ -25,7 +25,7 @@ export const login = user => {
     }
 
     return axios
-        .post('/users/login', data)
+        .post(window.env.backend + 'users/login', data)
         .then(res => {
             localStorage.setItem('usertoken', res.data.token)
             localStorage.setItem('id', res.data.primary_k);

@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import {Link, withRouter} from 'react-router-dom'
-import Play from './Play'
 import openSocket from 'socket.io-client'
-import axios from 'axios'
 
 class Room extends Component {
     constructor(props) {
@@ -16,24 +14,30 @@ class Room extends Component {
     
     componentDidMount() {
         window.onbeforeunload = () => {
+            console.log('onbeforeunload')
+            // debugger
             this.leave()
         }
 
         // Handling socket
-        this.socket = openSocket()
+        this.socket = openSocket(window.env.backend)
         if (this.socket !== undefined) {
             this.socket.on('err', data => {
-                alert(data)
+                console.log(data)
+                this.props.history.push('/')
             })
             this.socket.on('resRoomInfo', data => {
                 this.setState({roominfo: data})
             })
             this.socket.on('kickout', data => {
                 alert('This room is not available currently')
-                this.props.history.push('/');
+                this.props.history.push('/')
             })
             this.socket.on('players', data => {
                 this.setState({players: data})
+            })
+            this.socket.on('start', data => {
+                this.setState(state => ({roominfo: {...state.roominfo, active: true}}))
             })
 
             // enter the room
@@ -49,6 +53,8 @@ class Room extends Component {
         let id = parseInt(localStorage.getItem('id'))
         let ids = this.state.players.map(player => player.id)
         if (ids.includes(id)) {
+            console.log('componentWillUnmount')
+            // debugger
             this.leave()
         }
         window.onbeforeunload = null 
@@ -79,45 +85,50 @@ class Room extends Component {
     }
 
     leave = () => {
+        // debugger
         let userid = localStorage.getItem('id')
         let roomid = this.props.match.params.roomid
         if (userid === 'undefined' || roomid === undefined) {
             alert('Data not complete')
         } else {
+            let tmp = this
             this.socket.emit('leave', {
                 userid: userid,
                 roomid: roomid
             })
         }
     }
+    
+    start = () => {
+        this.socket.emit('start', {roomid: this.props.match.params.roomid})
+    }
 
     render() {
         return ( !this.state.roominfo ? 
             <h3>Loading</h3>
             :
-            <div>
-                <h1>{this.state.roominfo.name}</h1>    
-                {
-                    this.state.players.map(player => (
-                        <div>
-                            <p><strong>{player.name}</strong></p>
-                        </div>
-                    ))
-                }
-                {/* this.state.active ? <Play /> */}
-                {/* : */} 
-                {/* <div> */}
-                {/*     { */}
-                {/*         this.state.players.map(player => ( */}
-                {/*             <div> */}
-                {/*                 <h3>{player.name}</h3> */}
-                {/*             </div> */}
-                {/*         )) */}
-                {/*     } */}
-                {/*     <button onClick={() => {this.setState({status: 'entering'})}}>Play</button> */}
-                {/* </div> */}
-                {/* <h3>The room is closed<h3> */}
-            </div>
+            !this.state.roominfo.active ?
+                <div>
+                    <h1>{this.state.roominfo.name}</h1>    
+                    <button onClick={this.start}>start</button>    
+                    {
+                        this.state.players.map(player => (
+                            <div>
+                                <p><strong>{player.name}</strong></p>
+                            </div>
+                        ))
+                    }
+                </div>
+                :
+                <div>
+                    <h1>Play</h1>
+                    <h1>{this.state.roominfo.name}</h1>
+                    {
+                        this.state.players.map(player => (
+                            <p>{player.name}</p>
+                        ))
+                    }
+                </div>
         )
     }
 } 

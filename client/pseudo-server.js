@@ -40,7 +40,7 @@ app.post('/users/login', (req, res) => {
     })
 })
 app.get('/rooms', (req, res) => { 
-    let rooms = db.Rooms.map(room => ({primary_k: room.primary_k, name: room.name, player_num: room.playerID.length})) 
+    let rooms = db.Rooms.map(room => ({primary_k: room.primary_k, name: room.name, player_num: room.playerID.length, active: room.active})) 
     res.status(200).send(rooms) 
 })
 app.post('/rooms', (req, res) => {
@@ -53,8 +53,11 @@ app.post('/rooms', (req, res) => {
 const http = require('http').Server(app)
 const port = process.env.PORT || 5000
 
-// Routing
-app.use(express.static('public'))
+// Serve built index.html for all other routings
+app.use(express.static('build'))
+app.use('*', function(req, res){
+	res.status(200).sendfile("build/index.html");
+});
 
 // Socket.io serverSocket
 const serverSocket = require('socket.io')(http)
@@ -111,6 +114,12 @@ serverSocket.on('connection', socket => {
         } else {
             socket.emit('err', '[leave] Room not exists')
         }
+    })
+
+    socket.on('start', data => {
+        let room = db.Rooms.find(room => room.primary_k === parseInt(data.roomid))
+        room.active = true
+        serverSocket.to(data.roomid).emit('start')
     })
 
     socket.on('step', data => {

@@ -11,7 +11,7 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        axios.get('/rooms')
+        axios.get(window.env.backend + 'rooms')
             .then(res => {
                 this.setState({rooms: res.data})
             })
@@ -26,7 +26,7 @@ class Home extends Component {
         var n = d.toLocaleTimeString();
         let roomName = window.prompt('New room name: ', n)
         if (roomName) {
-            axios.post('/rooms', {roomName: roomName}, {headers: {id: localStorage.getItem('id')} })
+            axios.post(window.env.backend + 'rooms', {roomName: roomName}, {headers: {id: localStorage.getItem('id')} })
                 .then(res => {
                     this.props.history.push(`/rooms/${res.data.roomid}`)
                 })
@@ -44,6 +44,7 @@ class Home extends Component {
                     this.state.rooms.map(room => (
                         <div>
                             <h3>{room.name}</h3>
+                            <p>active: {room.active.toString()}</p>
                             <p>{`${room.player_num} players are in this room`}</p>
                             <Link to={`/rooms/${room.primary_k}`}>enter</Link>
                         </div>
