@@ -8,6 +8,8 @@ class Room extends Component {
         this.state = {
             roominfo: null,
             players: [],
+            timer: 3,
+            play: false
         }
         this.socket = undefined
     } 
@@ -38,6 +40,7 @@ class Room extends Component {
             })
             this.socket.on('start', data => {
                 this.setState(state => ({roominfo: {...state.roominfo, active: true}}))
+                this.interval = window.setInterval(() => {this.countdown()}, 1000)
             })
 
             // enter the room
@@ -58,6 +61,16 @@ class Room extends Component {
             this.leave()
         }
         window.onbeforeunload = null 
+    }
+    
+    countdown = () => {
+        this.setState(state => {
+            let newTimer = state.timer - 1
+            if (newTimer === 0) {
+                window.clearInterval(this.interval)
+            }
+            return {timer: newTimer}
+        })
     }
 
     enter = () => {
@@ -97,6 +110,7 @@ class Room extends Component {
                 roomid: roomid
             })
         }
+        window.clearInterval(this.interval)
     }
     
     start = () => {
@@ -121,7 +135,11 @@ class Room extends Component {
                 </div>
                 :
                 <div>
-                    <h1>Play</h1>
+                    { this.state.timer > 0 ?
+                        <h1>{this.state.timer}</h1>
+                        :    
+                        <h1>GO!</h1>
+                    }        
                     <h1>{this.state.roominfo.name}</h1>
                     {
                         this.state.players.map(player => (
