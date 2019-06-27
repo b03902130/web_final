@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {Link, withRouter} from 'react-router-dom'
+import axios from 'axios'
 
 class Home extends Component {
     constructor(props) {
@@ -10,16 +11,35 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        if (window.configs.usedb) {
-            this.setState({rooms: window.database.rooms})
-        } else {
-            alert('Not yet implement')
+        axios.get('/rooms')
+            .then(res => {
+                this.setState({rooms: res.data})
+            })
+            .catch(err => {
+                alert('Error in Home.js')
+                debugger
+            })
+    }
+
+    newRoom = () => {
+        var d = new Date();
+        var n = d.toLocaleTimeString();
+        let roomName = window.prompt('New room name: ', n)
+        if (roomName) {
+            axios.post('/rooms', {roomName: roomName}, {headers: {id: localStorage.getItem('id')} })
+                .then(res => {
+                    this.props.history.push(`/rooms/${res.data.roomid}`)
+                })
+                .catch(err => {
+                    alert('Error in Home.js')
+                })
         }
     }
 
     render() {
         return (
             <div>
+                <button onClick={this.newRoom}>NEW ROOM</button>
                 {
                     this.state.rooms.map(room => (
                         <div>
@@ -32,7 +52,7 @@ class Home extends Component {
             </div>                
         )
     }
-} 
-        
+}
+
 export default withRouter(Home)
 

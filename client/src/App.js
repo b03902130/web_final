@@ -6,6 +6,7 @@ import LandingPage from './components/LandingPage'
 import Login from './components/Login'
 import Register from './components/Register'
 import Profile from './components/Profile'
+import Room from './components/Room'
 import axios from 'axios'
 
 
@@ -36,11 +37,12 @@ class App extends Component{
           {/* <button onClick={this.getHandle}>get</button> */}
           {/* <button onClick={this.postHandle}>post</button> */}
           <Navbar />
-          <Route exact path="/" component={LandingPage} />
           <div className="container">
+            <Route exact path="/" component={LandingPage} />
             <Route exact path = "/register" component={Register} />
             <Route exact path = "/login" component={Login} />
             <Route exact path = "/profile" component={Profile} />
+            <Route exact path = "/rooms/:roomid" component={Room} />
           </div>
         
 

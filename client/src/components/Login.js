@@ -28,12 +28,10 @@ class Login extends Component {
 
         login(user).then(res => {
             if (res === localStorage.usertoken && res != undefined) {
-                //console.log(res);
                 this.setState({success: 1});
                 this.props.history.push(`/`)
             } else {
                 this.setState({success: 0});
-                //console.log(this.state.success);
             }
         })
 

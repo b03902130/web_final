@@ -9,16 +9,12 @@ export const register = newUser => {
         password: newUser.password
     }
 
-    if (window.configs.usedb) {
-        window.database.users.push(data)
-        return new Promise((resolve, reject) => {resolve(0)})
-    } else {
-        return axios
-            .post('users/register', data)
-            .then(res => {
-                console.log("Registered")
-            })
-    }
+    return axios
+        .post('/users/register', data)
+        .then(res => {
+            alert("Registered")
+        })
+        .catch(err => {debugger})
 }
 
 
@@ -28,31 +24,13 @@ export const login = user => {
         password: user.password
     }
 
-    if (window.configs.usedb) {
-        // always serve the first user in pseudo database without checking email and passwd
-        let user = window.database.users[0]
-
-        let token = jwt.encode({
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email 
-        }, 'secret')
-        localStorage.setItem('usertoken', token)
-        localStorage.setItem('id', user.primary_k);
-        return new Promise((resolve, reject) => {resolve(token)})
-    }
-    else {
-        return axios
-            .post('users/login', data)
-            .then(res => {
-                console.log(res);//test
-                localStorage.setItem('usertoken', res.data.token)
-                localStorage.setItem('id', res.data.primary_k);
-                return res.data.token
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    }
+    return axios
+        .post('/users/login', data)
+        .then(res => {
+            localStorage.setItem('usertoken', res.data.token)
+            localStorage.setItem('id', res.data.primary_k);
+            return res.data.token
+        })
+        .catch(err => {debugger})
 }
 
