@@ -113,6 +113,10 @@ serverSocket.on('connection', socket => {
     })
 
     socket.on('step', data => {
+        serverSocket.to(data.roomid).emit('step', {
+            id: data.userid,
+            step: data.step 
+        })
     })
 })
 

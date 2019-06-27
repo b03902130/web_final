@@ -9,7 +9,8 @@ class Room extends Component {
             roominfo: null,
             players: [],
             timer: 3,
-            play: false
+            play: false,
+            players_speed: {}
         }
         this.socket = undefined
     } 
@@ -39,8 +40,25 @@ class Room extends Component {
                 this.setState({players: data})
             })
             this.socket.on('start', data => {
-                this.setState(state => ({roominfo: {...state.roominfo, active: true}}))
+                let speeds = {}
+                this.state.players.forEach(player => {
+                    speeds[player.id] = 10
+                })
+                this.setState(state => ({roominfo: {...state.roominfo, active: true}, players_speed: speeds}))
                 this.interval = window.setInterval(() => {this.countdown()}, 1000)
+            })
+            this.socket.on('step', data => {
+                let playerid = parseInt(data.id)
+                let amount = data.step
+                this.setState(state => {
+                    let player = state.players.find(player => player.id === playerid)
+                    return {
+                        players_speed: {
+                            ...state.players_speed,
+                            [player.id]: state.players_speed[player.id] + amount
+                        }
+                    }
+                })
             })
 
             // enter the room
@@ -117,6 +135,14 @@ class Room extends Component {
         this.socket.emit('start', {roomid: this.props.match.params.roomid})
     }
 
+    speedup = (amount) => { 
+        this.socket.emit('step', {
+            roomid: this.props.match.params.roomid,
+            userid: localStorage.getItem('id'),
+            step: amount
+        })
+    }
+
     render() {
         return ( !this.state.roominfo ? 
             <h3>Loading</h3>
@@ -138,12 +164,16 @@ class Room extends Component {
                     { this.state.timer > 0 ?
                         <h1>{this.state.timer}</h1>
                         :    
-                        <h1>GO!</h1>
-                    }        
+                        <h1>GO! Speed {this.state.speed}</h1>
+                    }
+                    <button onClick={err => {this.speedup(10)}}>speedup</button>
                     <h1>{this.state.roominfo.name}</h1>
                     {
                         this.state.players.map(player => (
-                            <p>{player.name}</p>
+                            <div>
+                                <p><strong>{player.name}</strong></p>
+                                <p>{this.state.players_speed[player.id]}</p>
+                            </div>        
                         ))
                     }
                 </div>
