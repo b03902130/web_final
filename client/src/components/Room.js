@@ -24,7 +24,7 @@ class Room extends Component {
         // Handling socket
         this.socket = openSocket(window.env.backend)
         if (this.socket !== undefined) {
-            this.socket.on('err', data => {
+            this.socket.on('error', data => {
                 console.log(data)
                 this.props.history.push('/')
             })

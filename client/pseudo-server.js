@@ -63,7 +63,7 @@ serverSocket.on('connection', socket => {
     socket.on('enter', data => {
         let room = db.Rooms.find(room => room.primary_k === parseInt(data.roomid))
         if (room === undefined) {
-            socket.emit('err', '[enter] Room not exists')
+            socket.emit('error', '[enter] Room not exists')
             return
         }
         if (room.active || room.playerID.includes(parseInt(data.userid))) {
@@ -79,7 +79,7 @@ serverSocket.on('connection', socket => {
     socket.on('reqRoomInfo', data => {
         let room = db.Rooms.find(room => room.primary_k === parseInt(data.roomid))
         if (room === undefined) {
-            socket.emit('err', '[reqRoomInfo] Room not exists')
+            socket.emit('error', '[reqRoomInfo] Room not exists')
         } else {
             socket.emit('resRoomInfo', {
                 name: room.name
@@ -102,7 +102,7 @@ serverSocket.on('connection', socket => {
                 db.Rooms = db.Rooms.filter((room, i) => (i !== index))
             }
         } else {
-            socket.emit('err', '[leave] Room not exists')
+            socket.emit('error', '[leave] Room not exists')
         }
     })
 
