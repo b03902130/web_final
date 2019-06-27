@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const {db} = require('./pseudo-database.js')
 
+var counter = 100
+
 // Create server to serve index.html
 const app = express()
 app.use(cors());
@@ -12,9 +14,6 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-var counter = 100
-
 app.post('/users/register', (req, res) => {
     let newUser = req.body
     let data = {
@@ -26,7 +25,6 @@ app.post('/users/register', (req, res) => {
     db.Users.push(data)
     res.status(200).send()
 })
-
 app.post('/users/login', (req, res) => {
     let user = db.Users.filter(user => (user.email === req.body.email))[0]
     let token = jwt.encode({
@@ -52,14 +50,6 @@ app.post('/rooms', (req, res) => {
 
 const http = require('http').Server(app)
 const port = process.env.PORT || 5000
-
-// Serve built index.html for all other routings
-app.use(express.static('build'))
-app.use('*', function(req, res){
-	res.status(200).sendfile("build/index.html");
-});
-
-// Socket.io serverSocket
 const serverSocket = require('socket.io')(http)
 
 // Start server listening process.
