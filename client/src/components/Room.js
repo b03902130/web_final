@@ -143,12 +143,14 @@ class Room extends Component {
         this.socket.emit('start', {roomid: this.props.match.params.roomid})
     }
 
-    speedup = (amount) => { 
-        this.socket.emit('step', {
-            roomid: this.props.match.params.roomid,
-            userid: localStorage.getItem('id'),
-            step: amount
-        })
+    step = (amount) => { 
+        if (this.state.timer === 0) {
+            this.socket.emit('step', {
+                roomid: this.props.match.params.roomid,
+                userid: localStorage.getItem('id'),
+                step: amount
+            })
+        }
     }
 
     render() {
@@ -192,13 +194,13 @@ class Room extends Component {
                 </div>
                 :
                 <div>
+                    <h1>{this.state.roominfo.name}</h1>
                     { this.state.timer > 0 ?
                         <h1>{this.state.timer}</h1>
-                        :    
-                        <h1>GO! Speed {this.state.speed}</h1>
+                        :
+                        <h1>GO!</h1>
                     }
-                    <button onClick={err => {this.speedup(10)}}>speedup</button>
-                    <h1>{this.state.roominfo.name}</h1>
+                    <button onClick={err => {this.step(10)}}>speedup</button>
                     {
                         this.state.players.map(player => (
                             <div>
