@@ -1,6 +1,13 @@
 import React, { Component } from 'react'
 import {Link, withRouter} from 'react-router-dom'
 import openSocket from 'socket.io-client'
+import {
+    Typography,
+    Box,
+    Divider,
+    Fab,
+} from '@material-ui/core'
+import './Room.css'
 
 class Room extends Component {
     constructor(props) {
@@ -117,6 +124,7 @@ class Room extends Component {
 
     leave = () => {
         // debugger
+        console.log('Leave')
         let userid = localStorage.getItem('id')
         let roomid = this.props.match.params.roomid
         if (userid === 'undefined' || roomid === undefined) {
@@ -149,15 +157,38 @@ class Room extends Component {
             :
             !this.state.roominfo.active ?
                 <div>
-                    <h1>{this.state.roominfo.name}</h1>    
-                    <button onClick={this.start}>start</button>    
-                    {
-                        this.state.players.map(player => (
-                            <div>
-                                <p><strong>{player.name}</strong></p>
-                            </div>
-                        ))
-                    }
+                    <Fab
+                        variant="extended"
+                        size="medium"
+                        color="primary"
+                        aria-label="Add"
+                        onClick={this.start}
+                        style={{
+                            margin: "20px auto",
+                            display: "block"
+                        }}
+                    >
+                        START    
+                    </Fab>
+                    <Typography component="div">
+                        <Box className="title" textAlign="center" fontWeight="fontWeightLight" fontSize={22} fontFamily="Segoe UI">
+                            Room Name
+                        </Box>
+                        <Box className="content" textAlign="center" fontWeight="fontWeightHeavy" fontSize={60} fontFamily="Segoe UI">
+                            {this.state.roominfo.name}
+                        </Box>
+                        <Divider className="divider" />
+                        <Box className="title" textAlign="center" fontWeight="fontWeightLight" fontSize={22} fontFamily="Segoe UI">
+                            Players
+                        </Box>
+                        {
+                            this.state.players.map(player => (
+                                <Box className="content" textAlign="center" fontWeight="fontWeightHeavy" fontSize={36} fontFamily="Segoe UI">
+                                    {player.name}
+                                </Box>
+                            ))
+                        }
+                    </Typography>
                 </div>
                 :
                 <div>

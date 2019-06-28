@@ -68,12 +68,6 @@ class Home extends Component {
                             <RoomCard 
                                 room={room}
                             />
-                            {/* <Paper className='home_paper'> */}
-                            {/*     <h3>{room.name}</h3> */}
-                            {/*     <p>active: {room.active.toString()}</p> */}
-                            {/*     <p>{`${room.player_num} players are in this room`}</p> */}
-                            {/*     <Link to={`/rooms/${room.primary_k}`}>enter</Link> */}
-                            {/* </Paper> */}
                         </Grid>
                     ))
                 }
