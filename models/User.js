@@ -24,10 +24,13 @@ module.exports = db.sequelize.define('users',
             type: Sequelize.DATE,
             defaultValue: Sequelize.NOW
         }
+<<<<<<< HEAD
         ,
         score:{
             type: Sequelize.INTEGER
         }
+=======
+>>>>>>> 55be44ba7dec181f14fdcfbfbb0d2fbd02ea1ef7
     },
     {
         timestamps: false
