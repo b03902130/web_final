@@ -1,8 +1,8 @@
 import Webcam from "react-webcam";
-import Runner from "./Runner";
 import React, { Component } from "react";
+import { Animate } from "react-rebound";
 
-class App extends Component {
+class MotionDetection extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -89,10 +89,14 @@ class App extends Component {
                     videoConstraints={videoConstraints}
                 />
                 { this.state.imageSrc && <img style={{display: "block"}} src={this.state.imageSrc} alt="loading..." /> }
-                <Runner updateX={this.state.x} ID={this.state.selectImg} />
+                <section>
+                    <Animate translateX={this.state.x} friction={80}>
+                        <img style={{width: "100px"}} src={"gifs/" + "6" + ".gif"} alt="loading..." />
+                    </Animate>
+                </section>
             </div>
         );
     }
 }
-export default App;
+export default MotionDetection;
 
