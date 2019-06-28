@@ -66,7 +66,7 @@ serverSocket.on('connection', socket => {
             socket.emit('err', '[enter] Room not exists')
             return
         }
-        if (room.active) {
+        if (room.active || room.playerID.includes(parseInt(data.userid))) {
             socket.emit('kickout')
             return
         }
