@@ -12,7 +12,6 @@ class App extends Component {
     imageData: [],
     diffPixels: 0,
     notEND: true,
-    // selectImg: this.getRandomizer(1, 15).toString(),
     x: 0
   };
   getRandomizer = (bottom, top) => {
@@ -28,7 +27,7 @@ class App extends Component {
       for (var i = 0; i < diff.length; i++) {
         let n = Math.abs(diff[i] - this.state.imageData[i]);
         diff[i] = 255 - n;
-        if (diff[i] < 100) count++;
+        if (diff[i] < 150) count++;
       }
       let iData = new ImageData(diff, 350, 350);
       const diffCanvas = document.createElement("canvas");
@@ -46,7 +45,7 @@ class App extends Component {
     }
   };
   test = () => {
-    if (this.state.x >= 500 && this.state.notEND) {
+    if (this.state.x >= 1500 && this.state.notEND) {
       this.setState({ notEND: false }, alert("END"));
     }
   };
@@ -59,13 +58,19 @@ class App extends Component {
   }
 
   renderMotion = () => {
-    console.log("ID : ", this.state.selectImg);
     return <img src={this.state.imageSrc} alt="loading..." />;
   };
 
   updateX = () => {
-    if (this.state.diffPixels && this.state.x < 500) {
-      this.setState({ x: this.state.x + 3 });
+    console.log("num : ", Math.round(this.state.diffPixels / 2000));
+    if (
+      this.state.diffPixels &&
+      this.state.x < 1500 &&
+      Math.round(this.state.diffPixels / 2000) < 10
+    ) {
+      this.setState({
+        x: this.state.x + Math.round(this.state.diffPixels / 1000)
+      });
     }
   };
 
