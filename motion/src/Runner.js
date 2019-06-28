@@ -26,8 +26,7 @@ class Runner extends Component {
     return (
       <section>
         <Animate translateX={this.state.x} friction={80}>
-          {/* {console.log(this.state.ID)} */}
-          <img src={"gifs/" + "5" + ".gif"} alt="loading..." />
+          <img style={{width: "100px"}} src={"gifs/" + "6" + ".gif"} alt="loading..." />
         </Animate>
       </section>
     );
