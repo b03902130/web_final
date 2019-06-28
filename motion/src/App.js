@@ -12,7 +12,7 @@ class App extends Component {
     imageData: [],
     diffPixels: 0,
     notEND: true,
-    selectImg: this.getRandomizer(1, 15).toString(),
+    // selectImg: this.getRandomizer(1, 15).toString(),
     x: 0
   };
   getRandomizer = (bottom, top) => {
@@ -90,3 +90,4 @@ class App extends Component {
   }
 }
 export default App;
+
