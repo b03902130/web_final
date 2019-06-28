@@ -39,6 +39,7 @@ app.post('/users/login', (req, res) => {
 })
 app.get('/rooms', (req, res) => { 
     let rooms = db.Rooms.map(room => ({primary_k: room.primary_k, name: room.name, player_num: room.playerID.length, active: room.active})) 
+    rooms = rooms.filter(room => !room.active)
     res.status(200).send(rooms) 
 })
 app.post('/rooms', (req, res) => {
