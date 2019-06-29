@@ -73,15 +73,14 @@ class Home extends Component {
                     direction="row"
                     justify="center"
                     alignItems="center"
-                    spacing={5}
                     style={{
                         margin: "5px auto",
-                        padding: "0 150px"
+                        padding: "0 100px"
                     }}
                 >
                 {
                     this.state.leaders.map(leader => (
-                        <Grid item>
+                        <Grid item style={{margin: "10px 15px"}}>
                             <Typography component="div">
                                 <Box textAlign="center" fontWeight="fontWeightRegular" fontSize={22} fontFamily="Segoe UI">
                                     {leader.name}
