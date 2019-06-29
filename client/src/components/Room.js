@@ -7,6 +7,7 @@ import {
     Divider,
     Fab,
     Grid,
+    Paper,
 } from '@material-ui/core'
 import './Room.css'
 
@@ -22,11 +23,11 @@ class Room extends Component {
             players: [],
             timer: 3,
             players_x: {},
-            play: false,
         }
         this.end = false
         this.socket = undefined
         this.userid = localStorage.getItem('id')
+        this.endpoint = 500
     } 
     
     componentDidMount() {
@@ -63,9 +64,10 @@ class Room extends Component {
             })
             this.socket.on('step', data => {
                 let playerid = parseInt(data.id)
-                let new_x = data.step
                 this.setState(state => {
                     let player = state.players.find(player => player.id === playerid)
+                    let old_x = state.players_x[player.id]
+                    let new_x = data.step > old_x ? data.step : old_x
                     return {
                         players_x: {
                             ...state.players_x,
@@ -97,17 +99,14 @@ class Room extends Component {
     
     updateX = (diffPixels) => {
         let threshold = 10
-        let endpoint = 1000
+        let endpoint = this.endpoint
         let pixel = Math.round(diffPixels / 1000)
         pixel = pixel <= threshold ? pixel : threshold
        
         let old_x = this.state.players_x[this.userid]
-        if (diffPixels && old_x < endpoint) {
+        if (diffPixels && !this.end) {
             this.step(old_x + pixel)
-        } else if (old_x >= endpoint && !this.end) {
-            this.end = true
-            alert('Congradulation! You have reached the end!')
-        }
+        } 
     };
     
     countdown = () => {
@@ -115,8 +114,24 @@ class Room extends Component {
             let newTimer = state.timer - 1
             if (newTimer === 0) {
                 window.clearInterval(this.interval)
+                this.interval = window.setInterval(this.judger, 10)
             }
             return {timer: newTimer}
+        })
+    }
+    
+    judger = () => {
+        let start = document.getElementsByClassName(`gif-start`)[0].getBoundingClientRect().x
+        let movements = [...document.getElementsByClassName(`gif-now`)].map(obj => obj.getBoundingClientRect().x - start)
+        movements.forEach((movement, index) => {
+            if (movement >= this.endpoint) {
+                if (!this.state.winner) {
+                    this.setState({ winner: this.state.players[index].name })
+                }
+                if (this.state.players[index].id == this.userid) {
+                    this.end = true
+                }
+            }
         })
     }
 
@@ -217,27 +232,68 @@ class Room extends Component {
                 :
                 <div>
                     <Grid container spacing={3}>
-                        <Grid item xs={8}>
                         {
-                            this.state.timer > 0 ?
-                            <h1>{this.state.timer}</h1>
-                            :
-                            <h1>GO!</h1>
+                            this.state.timer !== 0 ?
+                                <Grid item xs={8} style={{marginTop: "50px"}}>
+                                {
+                                    <Typography component="div">
+                                        <Box textAlign="center" fontWeight="fontWeightBold" fontSize={48} fontFamily="Segoe UI">
+                                            ARE YOU READY
+                                        </Box>
+                                        <Box textAlign="center" fontWeight="fontWeightBold" fontSize={200} fontFamily="Segoe UI">
+                                            {this.state.timer}
+                                        </Box>
+                                    </Typography>
+                                }
+                                </Grid>
+                                :
+                                <Grid item xs={8}>
+                                    <Grid
+                                        container
+                                        direction="column"
+                                        justify="flex-start"
+                                        alignItems="center"
+                                    >
+                                    {
+                                        this.state.players.map(player => (
+                                            <Grid item style={{marginTop: "30px"}}>
+                                                <h3><strong>{player.name}</strong></h3>
+                                                <Runner x={this.state.players_x[player.id]} playerid={player.id} />
+                                            </Grid>        
+                                        ))
+                                    }
+                                    </Grid>
+                                </Grid>
                         }
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Camera updateX={this.updateX} />        
+                        <Grid item xs={4} style={{marginTop: "30px"}}>
+                            <Grid
+                                container
+                                direction="column"
+                                justify="flex-start"
+                                alignItems="center"
+                                spacing={2}
+                            >
+                                {
+                                    this.state.winner && 
+                                    <Grid item>
+                                        <Paper>
+                                            <Typography component="div">
+                                                <Box style={{width: "350px"}} textAlign="center" fontWeight="fontWeightLight" fontSize={22} fontFamily="Segoe UI">
+                                                    WINNER
+                                                </Box>
+                                                <Box style={{width: "350px"}} textAlign="center" fontWeight="fontWeightBold" fontSize={40} fontFamily="Segoe UI">
+                                                    {this.state.winner}
+                                                </Box>
+                                            </Typography>
+                                        </Paper>
+                                    </Grid>
+                                }        
+                                <Grid item>
+                                    <Camera updateX={this.updateX} />        
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
-                    {
-                        this.state.players.map(player => (
-                            <div>
-                                <p><strong>{player.name}</strong></p>
-                                <p>{this.state.players_x[player.id]}</p>
-                                <Runner x={this.state.players_x[player.id]} />
-                            </div>        
-                        ))
-                    }
                 </div>
         )
     }
