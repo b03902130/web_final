@@ -6,8 +6,13 @@ import {
     Box,
     Divider,
     Fab,
+    Grid,
 } from '@material-ui/core'
 import './Room.css'
+
+import { Animate } from "react-rebound"
+import Camera from './Camera'
+import Runner from './Runner'
 
 class Room extends Component {
     constructor(props) {
@@ -16,10 +21,12 @@ class Room extends Component {
             roominfo: null,
             players: [],
             timer: 3,
+            players_x: {},
             play: false,
-            players_speed: {}
         }
+        this.end = false
         this.socket = undefined
+        this.userid = localStorage.getItem('id')
     } 
     
     componentDidMount() {
@@ -47,22 +54,22 @@ class Room extends Component {
                 this.setState({players: data})
             })
             this.socket.on('start', data => {
-                let speeds = {}
+                let xs = {}
                 this.state.players.forEach(player => {
-                    speeds[player.id] = 10
+                    xs[player.id] = 0
                 })
-                this.setState(state => ({roominfo: {...state.roominfo, active: true}, players_speed: speeds}))
+                this.setState(state => ({roominfo: {...state.roominfo, active: true}, players_x: xs}))
                 this.interval = window.setInterval(() => {this.countdown()}, 1000)
             })
             this.socket.on('step', data => {
                 let playerid = parseInt(data.id)
-                let amount = data.step
+                let new_x = data.step
                 this.setState(state => {
                     let player = state.players.find(player => player.id === playerid)
                     return {
-                        players_speed: {
-                            ...state.players_speed,
-                            [player.id]: state.players_speed[player.id] + amount
+                        players_x: {
+                            ...state.players_x,
+                            [player.id]: new_x
                         }
                     }
                 })
@@ -78,7 +85,7 @@ class Room extends Component {
 
     componentWillUnmount() {
         // leave the room
-        let id = parseInt(localStorage.getItem('id'))
+        let id = parseInt(this.userid)
         let ids = this.state.players.map(player => player.id)
         if (ids.includes(id)) {
             console.log('componentWillUnmount')
@@ -87,6 +94,21 @@ class Room extends Component {
         }
         window.onbeforeunload = null 
     }
+    
+    updateX = (diffPixels) => {
+        let threshold = 10
+        let endpoint = 1000
+        let pixel = Math.round(diffPixels / 1000)
+        pixel = pixel <= threshold ? pixel : threshold
+       
+        let old_x = this.state.players_x[this.userid]
+        if (diffPixels && old_x < endpoint) {
+            this.step(old_x + pixel)
+        } else if (old_x >= endpoint && !this.end) {
+            this.end = true
+            alert('Congradulation! You have reached the end!')
+        }
+    };
     
     countdown = () => {
         this.setState(state => {
@@ -99,7 +121,7 @@ class Room extends Component {
     }
 
     enter = () => {
-        let userid = localStorage.getItem('id')
+        let userid = this.userid 
         let roomid = this.props.match.params.roomid
         if (userid === 'undefined' || roomid === undefined) {
             alert('Data not complete')
@@ -125,7 +147,7 @@ class Room extends Component {
     leave = () => {
         // debugger
         console.log('Leave')
-        let userid = localStorage.getItem('id')
+        let userid = this.userid 
         let roomid = this.props.match.params.roomid
         if (userid === 'undefined' || roomid === undefined) {
             alert('Data not complete')
@@ -147,7 +169,7 @@ class Room extends Component {
         if (this.state.timer === 0) {
             this.socket.emit('step', {
                 roomid: this.props.match.params.roomid,
-                userid: localStorage.getItem('id'),
+                userid: this.userid,
                 step: amount
             })
         }
@@ -194,18 +216,25 @@ class Room extends Component {
                 </div>
                 :
                 <div>
-                    <h1>{this.state.roominfo.name}</h1>
-                    { this.state.timer > 0 ?
-                        <h1>{this.state.timer}</h1>
-                        :
-                        <h1>GO!</h1>
-                    }
-                    <button onClick={err => {this.step(10)}}>speedup</button>
+                    <Grid container spacing={3}>
+                        <Grid item xs={8}>
+                        {
+                            this.state.timer > 0 ?
+                            <h1>{this.state.timer}</h1>
+                            :
+                            <h1>GO!</h1>
+                        }
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Camera updateX={this.updateX} />        
+                        </Grid>
+                    </Grid>
                     {
                         this.state.players.map(player => (
                             <div>
                                 <p><strong>{player.name}</strong></p>
-                                <p>{this.state.players_speed[player.id]}</p>
+                                <p>{this.state.players_x[player.id]}</p>
+                                <Runner x={this.state.players_x[player.id]} />
                             </div>        
                         ))
                     }

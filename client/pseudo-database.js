@@ -22,12 +22,12 @@ exports.db = {
         },
     ],
     Rooms: [
-        // {
-        //     primary_k: 11,
-        //     name: 'Lab531',
-        //     active: false,
-        //     playerID: [1000]
-        // },
+        {
+            primary_k: 11,
+            name: 'Lab531',
+            active: false,
+            playerID: [1000]
+        },
         // {
         //     primary_k: 13,
         //     name: 'Lab550',

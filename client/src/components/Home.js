@@ -51,7 +51,8 @@ class Home extends Component {
                     aria-label="Add"
                     onClick={this.newRoom}
                     style={{
-                        margin: "20px 15px"
+                        margin: "20px auto",
+                        display: "block"
                     }}
                 >
                     NEW ROOM       
