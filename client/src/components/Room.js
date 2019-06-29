@@ -63,18 +63,24 @@ class Room extends Component {
                 this.setState(state => ({roominfo: {...state.roominfo, active: true}, players_x: xs}))
                 this.interval = window.setInterval(() => {this.countdown()}, 1000)
             })
-            this.socket.on('step', data => {
+            this.socket.on('update', data => {
                 let playerid = parseInt(data.id)
                 this.setState(state => {
                     let player = state.players.find(player => player.id === playerid)
-                    let old_x = state.players_x[player.id]
-                    let new_x = data.step > old_x ? data.step : old_x
-                    return {
-                        players_x: {
-                            ...state.players_x,
-                            [player.id]: new_x
+                    let update
+                    if (player) {
+                        let old_x = state.players_x[player.id]
+                        let new_x = data.step > old_x ? data.step : old_x
+                        update = {
+                            players_x: {
+                                ...state.players_x,
+                                [player.id]: new_x
+                            }
                         }
+                    } else {
+                        update = {}
                     }
+                    return update
                 })
             })
 

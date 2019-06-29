@@ -134,7 +134,7 @@ serverSocket.on('connection', socket => {
     })
 
     socket.on('step', data => {
-        serverSocket.to(data.roomid).emit('step', {
+        serverSocket.to(data.roomid).emit('update', {
             id: data.userid,
             step: data.step 
         })
