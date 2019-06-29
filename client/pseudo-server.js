@@ -43,11 +43,30 @@ app.get('/rooms', (req, res) => {
     rooms = rooms.filter(room => !room.active)
     res.status(200).send(rooms) 
 })
+app.get('/highScore', (req, res) => { 
+    db.Users.sort((a, b) => a.score - b.score)
+    let highest = db.Users.slice(0, 5).map(user => ({
+        id: user.primary_k,
+        name: user.name,
+        score: user.score
+    }))
+    res.status(200).send(highest)
+})
 app.post('/rooms', (req, res) => {
     let primary_k = counter
     db.Rooms.push({primary_k: counter, active: false, playerID: [], name: req.body.roomName})
     counter += 1
     res.status(200).send({roomid: primary_k}) 
+})
+app.post('/record', (req, res) => {
+    let userid = req.headers.id
+    let roomid = req.body.roomid
+    let score = req.body.score
+    let user = db.Users.find(user => user.primary_k === parseInt(userid))
+    if (score < user.score) {
+        user.score = score
+    }
+    res.status(200).send() 
 })
 
 const http = require('http').Server(app)

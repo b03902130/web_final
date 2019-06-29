@@ -3,7 +3,10 @@ import {Link, withRouter} from 'react-router-dom'
 import axios from 'axios'
 import {
     Grid,
-    Fab
+    Fab,
+    Typography,
+    Box,
+    Divider
 } from '@material-ui/core'
 import RoomCard from './RoomCard'
 
@@ -11,7 +14,8 @@ class Home extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            rooms: []
+            rooms: [],
+            leaders: []
         }
     }
 
@@ -21,7 +25,15 @@ class Home extends Component {
                 this.setState({rooms: res.data})
             })
             .catch(err => {
-                alert('Error in Home.js')
+                alert('Error in getting rooms info')
+                debugger
+            })
+        axios.get(window.env.backend + 'highScore')
+            .then(res => {
+                this.setState({leaders: res.data})
+            })
+            .catch(err => {
+                alert('Error in getting highest scores')
                 debugger
             })
     }
@@ -43,7 +55,37 @@ class Home extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{paddingTop: "20px"}}>
+                <Box textAlign="center" fontWeight="fontWeightBold" fontSize={36} fontFamily="Segoe UI">
+                    Leaderboard
+                </Box>
+                <Grid
+                    container
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                    spacing={5}
+                    style={{
+                        margin: "5px auto",
+                        padding: "0 150px"
+                    }}
+                >
+                {
+                    this.state.leaders.map(leader => (
+                        <Grid item>
+                            <Typography component="div">
+                                <Box textAlign="center" fontWeight="fontWeightRegular" fontSize={22} fontFamily="Segoe UI">
+                                    {leader.name}
+                                </Box>
+                                <Box textAlign="center" fontWeight="fontWeightLight" fontSize={14} fontFamily="Segoe UI">
+                                    {`${leader.score} ms`}
+                                </Box>
+                            </Typography>
+                        </Grid>
+                    ))
+                }
+                </Grid>
+                <Divider style={{margin: "15px"}} />
                 <Fab
                     variant="extended"
                     size="medium"

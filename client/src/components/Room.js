@@ -14,6 +14,7 @@ import './Room.css'
 import { Animate } from "react-rebound"
 import Camera from './Camera'
 import Runner from './Runner'
+import axios from 'axios'
 
 class Room extends Component {
     constructor(props) {
@@ -115,6 +116,7 @@ class Room extends Component {
             if (newTimer === 0) {
                 window.clearInterval(this.interval)
                 this.interval = window.setInterval(this.judger, 10)
+                this.startTime = new Date().getTime()
             }
             return {timer: newTimer}
         })
@@ -128,8 +130,17 @@ class Room extends Component {
                 if (!this.state.winner) {
                     this.setState({ winner: this.state.players[index].name })
                 }
-                if (this.state.players[index].id == this.userid) {
+                if (!this.end && this.state.players[index].id == this.userid) {
                     this.end = true
+                    let userid = this.userid 
+                    let roomid = this.props.match.params.roomid
+                    axios.post(window.env.backend + 'record', {roomid: roomid, score: new Date().getTime() - this.startTime}, {headers: {id: userid} })
+                        .then(res => {
+                            console.log('Update successes')
+                        })
+                        .catch(err => {
+                            alert('Error when posting record')
+                        })
                 }
             }
         })
