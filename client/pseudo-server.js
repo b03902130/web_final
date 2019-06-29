@@ -56,6 +56,8 @@ app.post('/rooms', (req, res) => {
     let primary_k = counter
     db.Rooms.push({primary_k: counter, active: false, playerID: [], name: req.body.roomName})
     counter += 1
+    let rooms = getRooms()  
+    req.app.io.in('home').emit('update_rooms', rooms)
     res.status(200).send({roomid: primary_k}) 
 })
 app.post('/record', (req, res) => {
@@ -72,11 +74,18 @@ app.post('/record', (req, res) => {
 const http = require('http').Server(app)
 const port = process.env.PORT || 5000
 const serverSocket = require('socket.io')(http)
+app.io = serverSocket
 
 // Start server listening process.
 http.listen(port, () => {
     console.log(`Server listening on port ${port}.`)
 })
+
+function getRooms() {
+    let rooms = db.Rooms.map(room => ({primary_k: room.primary_k, name: room.name, player_num: room.playerID.length, active: room.active})) 
+    rooms = rooms.filter(room => !room.active)
+    return rooms
+}
 
 // Connect to mongo
 serverSocket.on('connection', socket => {
@@ -93,8 +102,16 @@ serverSocket.on('connection', socket => {
         }
         socket.join(data.roomid, () => {
             room.playerID.push(parseInt(data.userid))
-            serverSocket.to(data.roomid).emit('players', room.playerID.map(id => ({id: id, name: `name-${id}`})))
+            serverSocket.in(data.roomid).emit('players', room.playerID.map(id => ({id: id, name: `name-${id}`})))
+            serverSocket.in('home').emit('update_rooms', getRooms())
         })
+    })
+
+    socket.on('enter_home', data => {
+        socket.join('home')
+    })
+    socket.on('leave_home', data => {
+        socket.leave('home')
     })
 
     socket.on('reqRoomInfo', data => {
@@ -122,6 +139,7 @@ serverSocket.on('connection', socket => {
             } else if (room.playerID[0] === parseInt(data.userid)) {
                 db.Rooms = db.Rooms.filter((room, i) => (i !== index))
             }
+            serverSocket.in('home').emit('update_rooms', getRooms())
         } else {
             socket.emit('err', '[leave] Room not exists')
         }

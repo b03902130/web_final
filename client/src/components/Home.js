@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {Link, withRouter} from 'react-router-dom'
 import axios from 'axios'
+import openSocket from 'socket.io-client'
 import {
     Grid,
     Fab,
@@ -20,6 +21,11 @@ class Home extends Component {
     }
 
     componentDidMount() {
+        this.socket = openSocket(window.env.backend)
+        this.socket.emit('enter_home')
+        this.socket.on('update_rooms', data => {
+            this.setState({rooms: data})
+        })
         axios.get(window.env.backend + 'rooms')
             .then(res => {
                 this.setState({rooms: res.data})
@@ -36,6 +42,9 @@ class Home extends Component {
                 alert('Error in getting highest scores')
                 debugger
             })
+    }
+    componentWillUnmount() {
+        this.socket.emit('leave_home')    
     }
 
     newRoom = () => {
