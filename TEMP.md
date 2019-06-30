@@ -50,6 +50,8 @@ you will see the page showing at localhost:3000! ***I also use the proxy***
 透過camera感測影像，利用image processing的技術做到real time的motion detection，透過計算兩個時間點灰度值不一樣的pixel數量去驅動跑者前進直至跑者抵達終點。
 #### 排行榜
 後端會紀錄每個會員的最佳紀錄並針對紀錄做排名，公告在遊戲大廳當中。
+#### 加密資料庫
+後端db存取的資料都是密文，即使server被偷窺也能夠維持forward secrecy。
 
 ## Framework、Module、Source
 gif source：https://giphy.com/explore/reaction-speed?fbclid=IwAR34JC9L-D4w8vUNOfUjptjcfLQn8CuWjB_woFaNkNHCYMxTc8aAotuA9zc </br>
