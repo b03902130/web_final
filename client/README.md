@@ -1,5 +1,7 @@
 ## Independent frontend
 
+**NPM VERSION 6.9.2 IS REQUIRED**
+
 ### Available Scripts
 #### `npm start`
 - Open react webpack server on `http://localhost:3000`
