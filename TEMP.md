@@ -40,33 +40,37 @@ npm start
 you will see the page showing at localhost:3000! ***I also use the proxy***
 
 ## Function
-### 註冊
+#### 註冊
 判斷輸入帳號是否存在於db中，若不存在則能夠註冊帳號，若存在則回覆帳號已存在的alert訊息。
-### 登錄
+#### 登錄
 判斷輸入帳號是否存在於db且輸入密碼是否吻合資料比對，若條件不達成則回傳不合法alert訊息，合法則能登錄進到遊戲大廳。
-### 開房間、進入房間、等待遊戲、中場離開
+#### 開房間、進入房間、等待遊戲、中場離開
 前後端會溝通去紀錄使用者目前的狀態，讓前後端針對使用者的訊息保持一致。
-### 遊戲互動
+#### 遊戲互動
 透過camera感測影像，利用image processing的技術做到real time的motion detection，透過計算兩個時間點灰度值不一樣的pixel數量去驅動跑者前進直至跑者抵達終點。
-### 排行榜
+#### 排行榜
 後端會紀錄每個會員的最佳紀錄並針對紀錄做排名，公告在遊戲大廳當中。
 
 ## Framework、Module、Source
-gif source：https://giphy.com/explore/reaction-speed?fbclid=IwAR34JC9L-D4w8vUNOfUjptjcfLQn8CuWjB_woFaNkNHCYMxTc8aAotuA9zc
-web-camera：https://www.npmjs.com/package/react-webcam
-react-rebound：https://www.npmjs.com/package/react-rebound
-materialUI：https://material-ui.com/
+gif source：https://giphy.com/explore/reaction-speed?fbclid=IwAR34JC9L-D4w8vUNOfUjptjcfLQn8CuWjB_woFaNkNHCYMxTc8aAotuA9zc </br>
+web-camera：https://www.npmjs.com/package/react-webcam </br>
+react-rebound：https://www.npmjs.com/package/react-rebound </br>
+materialUI：https://material-ui.com/ </br>
+
+</br>
 
 ## Tools、Databse
-backend: axios, bcryptjs, jsonwebtoken, sequelize
-frontend: React, React-router, bootstrap, express
-db: PostgreSQL
-deployment: heroku
+backend: axios, bcryptjs, jsonwebtoken, sequelize</br>
+frontend: React, React-router, bootstrap, express</br>
+db: PostgreSQL</br>
+deployment: heroku</br>
+</br>
 
 ## Specializations
 李吉昌：前端影像處理、動畫設置、文書處理、demo影片拍攝。</br>
 楊書文：前後端整體架構設計、前端介面設計、前後端連接、程式碼錯誤校正。</br>
 胡均綸：後端運作設計、前後端連接、程式碼錯誤校正。</br>
+</br></br>
 
 ## Thoughts
 李吉昌：</br>
