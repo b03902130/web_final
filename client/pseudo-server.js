@@ -14,7 +14,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static('public'))
+app.use(express.static('build'))
 app.post('/users/register', (req, res) => {
     let newUser = req.body
     let data = {
@@ -69,6 +69,9 @@ app.post('/record', (req, res) => {
         user.score = score
     }
     res.status(200).send() 
+})
+app.use('*', (req, res) => {
+    res.status(200).sendFile(__dirname + '/build/index.html')
 })
 
 const http = require('http').Server(app)

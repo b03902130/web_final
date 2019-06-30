@@ -9,13 +9,11 @@ import {blue, red} from '@material-ui/core/colors';
 // Set up environment variables
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     window.env = {
-        // backend: 'http://localhost:5000/',
-        // backend: 'http://linux5.csie.ntu.edu.tw:5000/',
         backend: `http://${window.location.hostname}:5000/`
     }
 } else {
     window.env = {
-        backend: window.location.host
+        backend: `/`
     }
 }
 
